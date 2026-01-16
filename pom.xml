@@ -38,9 +38,6 @@
 
     <modules>
         <module>4.java</module>
-        <module>6.streams</module>
-        <module>7.schema_registry</module>
-        <module>8.tarea</module>
     </modules>
 
     <dependencyManagement>
