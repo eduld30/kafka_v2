@@ -60,7 +60,7 @@ De igual modo, se proporciona un script para automatizar la ejecución de todos 
 
 Los conectores a desarrollar por el alumno están comentados en el script. Descomentar una vez completados
 
-## Kafka Streams
+## Kafka Streams / KSQLDB / Flink
 
 A completar por el alumno.
 
