@@ -13,11 +13,11 @@ public class ConsumerApp {
 
     Thread consumerThread1 = new Thread(() -> createConsumer("consumer-0",config,topic));
     Thread consumerThread2 = new Thread(() -> createConsumer("consumer-1",config,topic));
-    //Thread consumerThread3 = new Thread(() -> createConsumer("consumer-2",config,topic));
+    Thread consumerThread3 = new Thread(() -> createConsumer("consumer-2",config,topic));
 
     consumerThread1.start();
     consumerThread2.start();
-    //consumerThread3.start();
+    consumerThread3.start();
   }
 
 }

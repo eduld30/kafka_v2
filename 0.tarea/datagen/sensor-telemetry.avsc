@@ -1,0 +1,8 @@
+{
+  "namespace": "com.farmia.iot",
+  "name": "SensorTelemetry",
+  "type": "record",
+  "fields": [
+    ...
+  ]
+}

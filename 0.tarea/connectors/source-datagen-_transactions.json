@@ -1,0 +1,12 @@
+{
+  "name": "source-datagen-_transactions",
+  "config": {
+    "connector.class": "io.confluent.kafka.connect.datagen.DatagenConnector",
+    "kafka.topic": "_transactions",
+    "schema.filename": "/home/appuser/transactions.avsc",
+    "schema.keyfield": "transaction_id",
+    "max.interval": 1000,
+    "iterations": 10000000,
+    "tasks.max": "1"
+  }
+}
