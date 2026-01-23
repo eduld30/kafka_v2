@@ -13,6 +13,7 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <kafka.version>3.8.0</kafka.version>
@@ -38,6 +39,8 @@
 
     <modules>
         <module>4.java</module>
+        <module>5.schema_registry</module>
+        <module>0.tarea</module>
     </modules>
 
     <dependencyManagement>

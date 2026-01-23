@@ -15,6 +15,7 @@
         <dependency>
             <artifactId>kafka-clients</artifactId>
             <groupId>org.apache.kafka</groupId>
+            <version>3.9.1</version>
         </dependency>
         <dependency>
             <artifactId>kafka-streams</artifactId>
