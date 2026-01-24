@@ -12,13 +12,7 @@ Como primer paso vamos a comprobar el estado nuestro cluster de `Kafka Connect` 
 
 Podemos acceder a esta `API` desde nuestra máquina.
 
-Nota: En caso de que vuestra distribución de docker no permita la comunicación con el contenedor podréis ejecutar los mismos comandos desde el mismo contenedor. Para entrar en él ejecutaremos:
-
-```shell
-docker exec -it connect /bin/bash
-```
-
-Una vez dentro comprobaremos el estado y versiones instaladas llamando:
+Para comprobar el estado y versiones instaladas llamando:
 
 ```shell
 curl http://localhost:8083 | jq
@@ -36,7 +30,7 @@ obtendremos una salida como esta:
 
 En la respuesta podemos vemos la versión y commit del servidor y el id kafka cluster que hace de backend de el. 
 
-Si obtenemos esta clase de respuesta es que nuestro cluster de connect esta preparado para trabajar.
+Si obtenemos esta clase de respuesta es que nuestro cluster de connect está preparado para trabajar.
 
 ## Get Connector Plugins
 
@@ -70,6 +64,8 @@ Deberíamos obtener una salida parecida a esta:
 
 como vemos los únicos plugins instalados son los correspondientes a `MirrorMaker`
 
+MirrorMaker es el conector que permite hacer integraciones entre dos **clusters** Kafka.
+
 ## Get Connectors 
 
 Para obtener las instancias de los conectores:
@@ -82,16 +78,16 @@ curl http://localhost:8083/connectors | jq
 []
 ```
 
-obtenemos una salida vacía (ya que no tenemos todavía ningún conector corriendo)
+obtenemos una salida vacía (ya que no tenemos todavía ningún conector ejecutando)
 
-> Nota: Todos los comandos que vayamos ejecutando los podréis ejecutar como sh desde la carpeta 5.connect
+> Nota: Todos los comandos que vayamos ejecutando los podréis ejecutar como sh desde la carpeta 6.connect
 > Os recomiendo usar un entorno linux (Linux, MAC o WSL en el caso de usar windows)
 
 ## Install Connector Plugins
 
 ### Install Datagen Source Connector Plugin
 
-Como primer paso vamos a instalar un plugin de conector tipo **source**, es decir uno que inserte datos en un topic Kafka. 
+Como primer paso vamos a instalar un plugin de conector tipo **source**, es decir uno que escribe datos en un topic Kafka. 
 
 El connector que usaremos es `Datagen Source Connector`, un conector que nos permitirá generar dato sintético en un topic Kafka.
 
@@ -103,7 +99,7 @@ Usaremos el comando  `confluent-hub` ya instalado en nuestro contenedor.
 ```shell
 docker exec -it connect /bin/bash
 ```
-El siguiente comando lo ejecutamos dentro del contenedor:
+El siguiente comando lo ejecutamos dentro del **contenedor**:
 
 ```shell
 confluent-hub install confluentinc/kafka-connect-datagen:0.6.6
@@ -191,10 +187,12 @@ Completed
 
 El conector JDBC necesita los drivers Java específicos de cada BD, en nuestro caso los de MySQL. 
 En la carpeta `1.environment/mysql` podéis encontrar el jar del driver en cuestión.
-Para copiarlo a nuestro contendor (ejecutar este comando en el directorio 5.connect):
+Para copiarlo a nuestro contendor (ejecutar este comando en el directorio 6.connect):
 
 ```bash
 docker cp ../1.environment/mysql/mysql-connector-java-5.1.45.jar connect:/usr/share/confluent-hub-components/confluentinc-kafka-connect-jdbc/lib/mysql-connector-java-5.1.45.jar
+
+Successfully copied 1MB to connect:/usr/share/confluent-hub-components/confluentinc-kafka-connect-jdbc/lib/mysql-connector-java-5.1.45.jar
 ```
 
 > ❗️ **NOTA**<br/>Si tuviéramos que conectarnos a otro tipo de base de datos como Oracle, Postgres, DB2 ... bastaría con hacer lo mismo con el correspondiente driver
@@ -209,7 +207,8 @@ curl http://localhost:8083/connector-plugins | jq
 
 Los conectores instalados siguen sin aparecer. 
 
-Esto es porque el servicio Kafka Connect ya está levantado. Necesitamos reiniciar el contenedor para que pueda detectar los nuevos conectores instalados. 
+Esto es porque el servicio Kafka Connect ya está ejecutando, y cuando arrancó no existían. 
+Necesitamos reiniciar el contenedor para que pueda detectar los nuevos conectores instalados. 
 
 Lo haremos ejecutando:
 
@@ -282,7 +281,10 @@ Tras revisar la documentación:
     "quickstart": "users",
     "max.interval": 1000,
     "iterations": 10000000,
-    "tasks.max": "1"
+    "tasks.max": "1",
+    "value.converter": "io.confluent.connect.avro.AvroConverter",
+    "value.converter.schema.registry.url": "http://schema-registry:8081",
+    "value.converter.schemas.enable": "false"
   }
 }
 ```
@@ -291,8 +293,13 @@ Además de configuración específica del conector, como que usamos el quickstar
 
 1. `connector.class`: Clase que implementa el connector.
 2. `kafka.topic`: Topic en el que publicará los mensajes (ojo esto es una configuración común pero no todos los conectores la llaman igual)
-3. `key.converter`: Converter que usaremos para la serialización de la key (en este caso string)
-4. `task.max`: Número máximo de tareas que se distribuirán en el cluster de connect.
+3. `quickstart` : nombre del dataset preconfigurado (también podemos usar uno propio mediante otra configuración)
+4. `max.interval` : cada segundo
+5. `ìterations`: numero de eventos a producir
+6. `task.max`: Número máximo de tareas que se distribuirán en el cluster de connect.
+7. `value.converter`: Establecemos serializacion en avro
+8. `value.converter.schema.registry.url` : url del schema registry
+9. `value.converter.schemas.enable` : indica que no se incruste el esquema completo dentro de cada mensaje Kafka sino el ID del esquema registrado en el Schema Registry. Es el comportamiento por defecto pero lo hago explicito porque en versiones anteriores no lo era.
 
 para publicar esta configuración volveremos a usar el api de connect:
 
@@ -304,7 +311,7 @@ Con este curl estamos pasando un fichero que contiene la configuración para del
 
 > Nota:
 > 
-> Este comando debe ejecutarse desde la carpeta 5.connect
+> Este comando debe ejecutarse desde la carpeta 6.connect
 >
 > En caso de estar ejecutando los curl desde el contenedor debeis copiar primero el fichero de configuración json a la carpeta desde donde ejecutéis el curl:
 > 
@@ -339,7 +346,7 @@ Haciendo uso, de nuevo del api de connect podemos recibir la información import
 Consulta Connector información:
 
 ```bash
-curl http://localhost:8083/connectors/source-datagen-users
+curl http://localhost:8083/connectors/source-datagen-users | jq
 ```
 
 ```json
@@ -347,11 +354,14 @@ curl http://localhost:8083/connectors/source-datagen-users
   "name": "source-datagen-users",
   "config": {
     "connector.class": "io.confluent.kafka.connect.datagen.DatagenConnector",
+    "value.converter.schema.registry.url": "http://schema-registry:8081",
     "quickstart": "users",
     "tasks.max": "1",
+    "value.converter.schemas.enable": "false",
     "name": "source-datagen-users",
     "kafka.topic": "users",
     "max.interval": "1000",
+    "value.converter": "io.confluent.connect.avro.AvroConverter",
     "iterations": "10000000"
   },
   "tasks": [
@@ -475,13 +485,12 @@ Permite pausar el connector (la aplicación sigue corriendo pero los **productor
   "type": "source"
 }
 ```
-## Connecto Resume
+## Connector Resume
 
 Permite continuar donde los dejamos sin reiniciar:
 
 ```bash
-curl -X PUT http://localhost:8083/connectors/source-datagen-users/resume 
-
+curl -X PUT http://localhost:8083/connectors/source-datagen-users/resume &&
 curl http://localhost:8083/connectors/source-datagen-users/status | jq  
 ```
 
@@ -509,8 +518,7 @@ curl http://localhost:8083/connectors/source-datagen-users/status | jq
 Reinicia el conector:
 
 ```bash
-curl -X POST http://localhost:8083/connectors/source-datagen-users/restart
-
+curl -X POST http://localhost:8083/connectors/source-datagen-users/restart &&
 curl http://localhost:8083/connectors/source-datagen-users/status | jq  
 ```
 
@@ -554,7 +562,7 @@ curl -X DELETE http://localhost:8083/connectors/source-datagen-users
 Si comprobamos los conectores de nuestro cluster veremos que ahora esta vacío.
 
 ```bash
-curl http://localhost:8083/connectors/
+curl http://localhost:8083/connectors/ | jq
 ```
 
 ```json
@@ -578,7 +586,11 @@ para crear este conector de ejemplo usaremos esta configuracion:
     "tasks.max": "1",
     "connection.url": "jdbc:mysql://mysql:3306/db?user=user&password=password&useSSL=false",
     "topics": "users",
-    "auto.create": "true"
+    "auto.create": "true",
+    "auto.evolve": "true",
+    "value.converter": "io.confluent.connect.avro.AvroConverter",
+    "value.converter.schema.registry.url": "http://schema-registry:8081",
+    "value.converter.schemas.enable": "false"
   }
 }
 ```
@@ -600,6 +612,10 @@ curl -d @"./connectors/sink-mysql-users.json" -H "Content-Type: application/json
     "connection.url": "jdbc:mysql://mysql:3306/db?user=user&password=password&useSSL=false",
     "topics": "users",
     "auto.create": "true",
+    "auto.evolve": "true",
+    "value.converter": "io.confluent.connect.avro.AvroConverter",
+    "value.converter.schema.registry.url": "http://schema-registry:8081",
+    "value.converter.schemas.enable": "false",
     "name": "sink-mysql-users"
   },
   "tasks": [],
@@ -634,9 +650,11 @@ Usaremos comandos MySQL ejecutados dentro del contenedor para observar que es lo
 ```bash
 docker exec -it mysql /bin/bash
 ```
+
 ```bash
 mysql --user=root --password=password --database=db
 ```
+
 ```
 bash-4.4# mysql --user=root --password=password --database=db 
 mysql: [Warning] Using a password on the command line interface can be insecure.
@@ -700,8 +718,31 @@ mysql> select * from users order by registertime desc limit 10;
 10 rows in set (0.00 sec)
 ```
 
+```
+mysql> elect *,from_unixtime(registertime/1000) from users order by registertime desc limit 10;
++---------------+--------+----------+--------+----------------------------------+
+| registertime  | userid | regionid | gender | from_unixtime(registertime/1000) |
++---------------+--------+----------+--------+----------------------------------+
+| 1519269649108 | User_5 | Region_4 | FEMALE | 2018-02-22 03:20:49.1080         |
+| 1519261872179 | User_1 | Region_2 | MALE   | 2018-02-22 01:11:12.1790         |
+| 1519180613818 | User_8 | Region_7 | OTHER  | 2018-02-21 02:36:53.8180         |
+| 1519176407977 | User_7 | Region_1 | MALE   | 2018-02-21 01:26:47.9770         |
+| 1519160704236 | User_6 | Region_5 | MALE   | 2018-02-20 21:05:04.2360         |
+| 1519153073388 | User_7 | Region_2 | MALE   | 2018-02-20 18:57:53.3880         |
+| 1519132370588 | User_9 | Region_3 | OTHER  | 2018-02-20 13:12:50.5880         |
+| 1519117514940 | User_2 | Region_1 | FEMALE | 2018-02-20 09:05:14.9400         |
+| 1519100101404 | User_8 | Region_6 | OTHER  | 2018-02-20 04:15:01.4040         |
+| 1519099280461 | User_3 | Region_5 | OTHER  | 2018-02-20 04:01:20.4610         |
++---------------+--------+----------+--------+----------------------------------+
+```
+
+```
+mysql> quit
+Bye
+bash-4.4# exit
+```
 ## Script de Instalación de Plugins
 
-Para poder tener como base para experimentar con KSQL y STREAMS con lo trabajado hasta ahora en la carpeta `1.environment` teneis disponible el script `install-connect-plugins.sh` que automatiza la instalación de plugins.
+Para poder tener como base para experimentar con KSQL y STREAMS con lo trabajado hasta ahora en la carpeta `1.environment` teneis disponible el script `install-connect-plugins.sh` que automatiza la instalación de varios plugins.
 
 > Nota: Este script es una manera de ponernos en un punto avanzado desde 0, la recomendación para el correcto aprendizaje es realizar todos los ejercicios en el orden propuesto.
