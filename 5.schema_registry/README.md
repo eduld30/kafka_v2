@@ -190,3 +190,22 @@ Vamos a registrar la nueva versión
 [INFO] Total time:  0.547 s
 [INFO] ------------------------------------------------------------------------
 ```
+
+### Producción en python
+
+Vamos a ejecutar la producción en python con el schema de la última version
+
+Primero vamos a crear un virtual env instalando las dependencias necesarias
+```bash
+cd src/main/python
+python -m venv kafka
+source kafka/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt 
+```
+Lo siguiente será ejecutar el siguiente comando
+
+```bash
+python temperature_telemetry_v2_producer.py
+```
+

@@ -285,9 +285,14 @@ services:
       MYSQL_PASSWORD: password
       MYSQL_ROOT_HOST: 172.%
 
-  apicurio:
-    image: apicurio/apicurio-registry:3.0.6
-    hostname: apicurio
-    container_name: apicurio
+  mongodb:
+    image: mongo:8.0
+    container_name: mongodb
+    restart: unless-stopped
     ports:
-      - "8090:8088"
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: secret123
+      MONGO_INITDB_DATABASE: course
+    command: [ "--quiet", "--logpath", "/dev/null" ]

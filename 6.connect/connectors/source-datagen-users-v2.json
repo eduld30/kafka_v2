@@ -1,12 +1,16 @@
 {
-  "name": "source-datagen-users",
+  "name": "source-datagen-users-v2",
   "config": {
     "connector.class": "io.confluent.kafka.connect.datagen.DatagenConnector",
-    "kafka.topic": "users",
+    "kafka.topic": "users_v2",
     "quickstart": "users",
     "max.interval": 1000,
     "iterations": 10000000,
     "tasks.max": "1",
+    "transforms": "tsconverter",
+    "transforms.tsconverter.type": "org.apache.kafka.connect.transforms.TimestampConverter$Value",
+    "transforms.tsconverter.field": "registertime",
+    "transforms.tsconverter.target.type": "Timestamp",
     "value.converter": "io.confluent.connect.avro.AvroConverter",
     "value.converter.schema.registry.url": "http://schema-registry:8081",
     "value.converter.schemas.enable": "false"

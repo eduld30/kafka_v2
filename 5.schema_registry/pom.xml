@@ -11,8 +11,33 @@
 
     <artifactId>schema-registry</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>schema</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/avro/</sourceDirectory>
+                            <includes>
+                                <include>*.avsc</include>
+                            </includes>
+                            <outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>io.confluent</groupId>
                 <artifactId>kafka-schema-registry-maven-plugin</artifactId>
@@ -20,12 +45,6 @@
                     <schemaRegistryUrls>
                         <param>http://localhost:8081</param>
                     </schemaRegistryUrls>
-                    <schemaTypes>
-                        <temperature-telemetry>AVRO</temperature-telemetry>
-                    </schemaTypes>
-                    <compatibilityLevels>
-                        <temperature-telemetry>FORWARD</temperature-telemetry>
-                    </compatibilityLevels>
                     <subjects>
                         <temperature-telemetry-value>${project.basedir}/src/main/avro/com.ucmmaster.kafka.data.v2.TemperatureTelemetry.avsc</temperature-telemetry-value>
                     </subjects>
