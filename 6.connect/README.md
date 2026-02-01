@@ -262,6 +262,9 @@ observando que ahora si los tenemos disponible:
 
 > ❗️ **NOTA**<br/>El connector JDBC instala dos conectores: el tipo Source como el Sink
 
+
+# Ejercicio 1
+
 ## Create Datagen Source Connector Instance
 
 Lo siguiente será crear una nueva instancia de nuestro conector  
@@ -719,7 +722,7 @@ mysql> select * from users order by registertime desc limit 10;
 ```
 
 ```
-mysql> elect *,from_unixtime(registertime/1000) from users order by registertime desc limit 10;
+mysql> select *,from_unixtime(registertime/1000) from users order by registertime desc limit 10;
 +---------------+--------+----------+--------+----------------------------------+
 | registertime  | userid | regionid | gender | from_unixtime(registertime/1000) |
 +---------------+--------+----------+--------+----------------------------------+
@@ -743,6 +746,18 @@ bash-4.4# exit
 ```
 ## Script de Instalación de Plugins
 
-Para poder tener como base para experimentar con KSQL y STREAMS con lo trabajado hasta ahora en la carpeta `1.environment` teneis disponible el script `install-connect-plugins.sh` que automatiza la instalación de varios plugins.
+Para poder tener como base para experimentar con KSQLDB, KAFKA STREAMS o FLINK con lo trabajado hasta ahora en la carpeta `1.environment` teneis disponible el script `install-connect-plugins.sh` que automatiza la instalación de varios plugins.
 
 > Nota: Este script es una manera de ponernos en un punto avanzado desde 0, la recomendación para el correcto aprendizaje es realizar todos los ejercicios en el orden propuesto.
+
+## Debug 🪲
+
+Muchas veces al configurar los conectores obtendremos errores. 
+
+Para poder depurar correctamente los logs debemos usar este comando:
+
+```bash
+docker logs -f connect   
+```
+
+# Ejercicio 2
