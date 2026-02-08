@@ -1,0 +1,88 @@
+{
+  "namespace": "com.ucmmaster.kafka.data.v1",
+  "type": "record",
+  "name": "Device",
+  "doc": "Información estática de cada dispositivo",
+  "fields": [
+    {
+      "name": "id",
+      "doc": "Device id",
+      "type": {
+        "type": "int",
+        "arg.properties": {
+          "iteration": { "start": 1, "step": 1, "max":  100}
+        }
+      }
+    },
+    {
+      "name": "serial",
+      "doc": "Numero de serie",
+      "type": {
+        "type": "string",
+        "arg.properties": {
+          "regex": "SN[A-Z0-9]{8}"
+        }
+      }
+    },
+    {
+      "name": "firmware",
+      "doc": "Versión del firmware",
+      "type": {
+        "type": "string",
+        "default": "v1.0.0",
+        "arg.properties": {
+          "options": ["v1.2.3", "v1.3.1", "v2.0.0-beta", "v2.1.4", "v3.0.0"]
+        }
+      }
+    },
+    {
+      "name": "model",
+      "doc": "Modelo de dispositivo",
+      "type" : {
+        "type": "string",
+        "arg.properties": {
+          "options": [
+            "TEMP-SENSOR-PRO",
+            "ENV-MONITOR-3000",
+            "CLIMATE-GUARD-X1",
+            "SMART-THERMO-V2",
+            "IoT-CLIMA-LITE"
+          ]
+        }
+      }
+    },
+    {
+      "name": "temperature_threshold",
+      "doc": "Temperatura umbral crítica",
+      "type": {
+        "type": "int",
+        "arg.properties": {
+          "range": {
+            "min": 35,
+            "max": 40
+          }
+        }
+      }
+    },
+    {
+      "name": "latitude",
+      "doc": "Latitud en grados decimales (WGS 84 / EPSG:4326)",
+      "type" : {
+        "type": "double",
+        "arg.properties": {
+          "options": [52.52, 48.86, 51.51, 41.39, 48.21, 59.44, 52.23, 50.85, 55.76,38.72, 44.84, 37.98, 42.70, 50.08, 53.35]
+        }
+      }
+    },
+    {
+      "name": "longitude",
+      "doc": "Longitud en grados decimales (WGS 84 / EPSG:4326)",
+      "type" : {
+        "type": "double",
+        "arg.properties": {
+          "options": [13.41,  2.35,  -0.13, -2.17, 16.37, 24.75, 21.01, 4.35, 37.62, -9.14, 20.47, 23.72, 23.32, 4.35, -6.26]
+        }
+      }
+    }
+  ]
+}
