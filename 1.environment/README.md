@@ -39,7 +39,7 @@ docker compose ps
 * parar el entorno:
 
 ```bash
-docker compose down
+docker compose down -v
 ```
 
 ## URLs
