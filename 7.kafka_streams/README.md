@@ -52,3 +52,19 @@ El stream resultante de este filtro producirá eventos en el topic **temperature
 Revisa el código de la aplicación para entender los pasos.
 
 Ejecuta la aplicación y observa el topic resultante.
+
+##
+
+```bash
+docker cp src/main/avro/*Device.avsc connect:/home/appuser/
+docker cp src/main/avro/*Telemetry.avsc connect:/home/appuser/
+
+```
+
+```bash
+curl -d @"./connectors/source-datagen-devices.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors | jq
+```
+
+```bash
+curl -d @"./connectors/source-datagen-temperature-telemetry.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors | jq
+```
