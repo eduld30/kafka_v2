@@ -1,0 +1,12 @@
+{
+  "name": "source-datagen-sensor-telemetry",
+  "config": {
+    "connector.class": "io.confluent.kafka.connect.datagen.DatagenConnector",
+    "kafka.topic": "sensor-telemetry",
+    "schema.filename": "/home/appuser/sensor-telemetry.avsc",
+    "schema.keyfield": "sensor_id",
+    "max.interval": "1000",
+    "iterations": "10000000",
+    "tasks.max": "1"
+  }
+}

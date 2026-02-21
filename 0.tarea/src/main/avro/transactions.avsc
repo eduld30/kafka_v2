@@ -1,0 +1,65 @@
+{
+  "namespace": "com.farmia.sales",
+  "name": "SalesTransaction",
+  "type": "record",
+  "fields": [
+    {
+      "name": "transaction_id",
+      "type": {
+        "type": "string",
+        "arg.properties": {
+          "regex": "tx[1-9]{5}"
+        }
+      }
+    },
+    {
+      "name": "product_id",
+      "type": {
+        "type": "string",
+        "arg.properties": {
+          "regex": "prod_[1-9]{3}"
+        }
+      }
+    },
+    {
+      "name": "category",
+      "type": {
+        "type": "string",
+        "arg.properties": {
+          "options": [
+            "fertilizers",
+            "seeds",
+            "pesticides",
+            "equipment",
+            "supplies",
+            "soil"
+          ]
+        }
+      }
+    },
+    {
+      "name": "quantity",
+      "type": {
+        "type": "int",
+        "arg.properties": {
+          "range": {
+            "min": 1,
+            "max": 10
+          }
+        }
+      }
+    },
+    {
+      "name": "price",
+      "type": {
+        "type": "float",
+        "arg.properties": {
+          "range": {
+            "min": 10.00,
+            "max": 200.00
+          }
+        }
+      }
+    }
+  ]
+}
