@@ -1,0 +1,34 @@
+{
+  "namespace": "com.farmia.iot",
+  "name": "SensorAlert",
+  "type": "record",
+  "fields": [
+    {
+      "name": "sensor_id",
+      "type": "string"
+    },
+    {
+      "name": "alert_type",
+      "type": {
+        "type": "enum",
+        "name": "AlertType",
+        "symbols": [
+          "HIGH_TEMPERATURE",
+          "LOW_HUMIDITY",
+          "HIGH_TEMPERATURE_AND_LOW_HUMIDITY"
+        ]
+      }
+    },
+    {
+      "name": "timestamp",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "details",
+      "type": "string"
+    }
+  ]
+}
