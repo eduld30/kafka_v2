@@ -262,6 +262,14 @@ observando que ahora si los tenemos disponible:
 
 > ❗️ **NOTA**<br/>El connector JDBC instala dos conectores: el tipo Source como el Sink
 
+## Connector Config
+
+```bash
+curl http://localhost:8083/connector-plugins/io.confluent.kafka.connect.datagen.DatagenConnector/config | jq
+```
+
+# Ejercicio 1
+
 ## Create Datagen Source Connector Instance
 
 Lo siguiente será crear una nueva instancia de nuestro conector  
@@ -300,6 +308,14 @@ Además de configuración específica del conector, como que usamos el quickstar
 7. `value.converter`: Establecemos serializacion en avro
 8. `value.converter.schema.registry.url` : url del schema registry
 9. `value.converter.schemas.enable` : indica que no se incruste el esquema completo dentro de cada mensaje Kafka sino el ID del esquema registrado en el Schema Registry. Es el comportamiento por defecto pero lo hago explicito porque en versiones anteriores no lo era.
+
+para validar esta configuración podemos usar el siguiente endpoint
+
+```bash
+curl -d @"./connectors/source-datagen-users.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connector-plugins/sink/config/validate | jq
+```
+
+💎 Este comando es muy util para detectar problemas en nuestra configuración antes de lanzar el conector.
 
 para publicar esta configuración volveremos a usar el api de connect:
 
@@ -575,7 +591,6 @@ En este caso leeremos los datos que hemos creado con el conector previo en el to
 
 Para ello usaremos el [JDBC Sink Connector](https://www.confluent.io/hub/confluentinc/kafka-connect-jdbc)
 
-
 para crear este conector de ejemplo usaremos esta configuracion:
 
 ```json
@@ -719,7 +734,7 @@ mysql> select * from users order by registertime desc limit 10;
 ```
 
 ```
-mysql> elect *,from_unixtime(registertime/1000) from users order by registertime desc limit 10;
+mysql> select *,from_unixtime(registertime/1000) from users order by registertime desc limit 10;
 +---------------+--------+----------+--------+----------------------------------+
 | registertime  | userid | regionid | gender | from_unixtime(registertime/1000) |
 +---------------+--------+----------+--------+----------------------------------+
@@ -743,6 +758,122 @@ bash-4.4# exit
 ```
 ## Script de Instalación de Plugins
 
-Para poder tener como base para experimentar con KSQL y STREAMS con lo trabajado hasta ahora en la carpeta `1.environment` teneis disponible el script `install-connect-plugins.sh` que automatiza la instalación de varios plugins.
+Para poder tener como base para experimentar con KSQLDB, KAFKA STREAMS o FLINK con lo trabajado hasta ahora en la carpeta `1.environment` teneis disponible el script `install-connect-plugins.sh` que automatiza la instalación de varios plugins.
 
 > Nota: Este script es una manera de ponernos en un punto avanzado desde 0, la recomendación para el correcto aprendizaje es realizar todos los ejercicios en el orden propuesto.
+
+## Debug 🪲
+
+Muchas veces al configurar los conectores obtendremos errores. 
+
+Para poder depurar correctamente los logs debemos usar este comando:
+
+```bash
+docker logs -f connect   
+```
+
+# Ejercicio 2
+
+Antes de continuar debes parar los dos conectores del ejercicio anterior.
+
+En este segundo ejercicio vamos a practicar con el mismo dataset pero vamos a hacer uso de una SMT para cambiar el tipo del campo registertime a timestamp.
+
+Creamos el nuevo conector datagen usando esta configuración:
+
+```json
+{
+  "name": "source-datagen-users-v2",
+  "config": {
+    "connector.class": "io.confluent.kafka.connect.datagen.DatagenConnector",
+    "kafka.topic": "users",
+    "quickstart": "users",
+    "max.interval": 1000,
+    "iterations": 10000000,
+    "tasks.max": "1",
+    "transforms": "tsconverter",
+    "transforms.tsconverter.type": "org.apache.kafka.connect.transforms.TimestampConverter$Value",
+    "transforms.tsconverter.field": "registertime",
+    "transforms.tsconverter.target.type": "Timestamp",
+    "value.converter": "io.confluent.connect.avro.AvroConverter",
+    "value.converter.schema.registry.url": "http://schema-registry:8081",
+    "value.converter.schemas.enable": "false"
+  }
+}
+```
+Es la misma configuración que antes pero en este caso añadiendo la transformación.
+
+```bash
+curl -d @"./connectors/source-datagen-users-v2.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors | jq
+```
+
+¡Ojo! el cambio de tipo de datos en un campo de un schema nunca es un cambio válido en la evolución de un schema, pero en este caso, el tipo sigue siendo long, lo único que ha cambiado en el schema avro es el tipo lógico (**logical-type**), y por lo tanto si es compatible
+
+[users-value](http://localhost:9021/clusters/Nk018hRAQFytWskYqtQduw/management/topics/users/schema/value)
+
+Debería haber una nueva versión del schema en el subject!
+
+Si verificamos la tabla de la base de datos, nada ha cambiado ya que la columna sigue siendo de tipo bigint.
+
+```
+mysql> describe users;
++--------------+--------+------+-----+---------+-------+
+| Field        | Type   | Null | Key | Default | Extra |
++--------------+--------+------+-----+---------+-------+
+| registertime | bigint | NO   |     | NULL    |       |
+| userid       | text   | NO   |     | NULL    |       |
+| regionid     | text   | NO   |     | NULL    |       |
+| gender       | text   | NO   |     | NULL    |       |
++--------------+--------+------+-----+---------+-------+
+4 rows in set (0.01 sec)
+```
+
+Si quisiéramos que la tabla en base de datos tuviera el campo con tipo timestamp, necesitamos crear una nueva tabla
+
+```json
+{
+    "name": "sink-mysql-users-v2",
+    "config": {
+        "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+        "tasks.max": "1",
+        "connection.url": "jdbc:mysql://mysql:3306/db?user=user&password=password&useSSL=false",
+        "topics": "users",
+        "table.name.format":"${topic}_v2",
+        "auto.create": "true",
+        "auto.evolve": "true",
+        "value.converter": "io.confluent.connect.avro.AvroConverter",
+        "value.converter.schema.registry.url": "http://schema-registry:8081",
+        "value.converter.schemas.enable": "false",
+        "value.converter.use.latest.version" : "true"
+    }
+}
+```
+Lo importante en esta configuración es la linea
+1. `table.name.format` : "${topic}_v2" para crear una nueva tabla con el sufijo _v2
+2. `value.converter.use.latest.version` : para que el schema de la tabla sea acorde a la ultima version (define registertime como timestamp)
+
+```bash
+curl -d @"./connectors/sink-mysql-users-v2.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors | jq
+```
+
+```bash
+mysql> show tables;
++--------------+
+| Tables_in_db |
++--------------+
+| users        |
+| users_v2     |
++--------------+
+2 rows in set (0.01 sec)
+
+mysql> describe users_v2;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| registertime | datetime(3) | NO   |     | NULL    |       |
+| userid       | text        | NO   |     | NULL    |       |
+| regionid     | text        | NO   |     | NULL    |       |
+| gender       | text        | NO   |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+```

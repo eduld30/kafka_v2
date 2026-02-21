@@ -1,0 +1,35 @@
+{
+  "namespace": "com.ucmmaster.kafka.data.v1",
+  "type": "record",
+  "name": "TemperatureAlert",
+  "doc": "Alerta de temperatura",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "name": "temperature",
+      "type": "int"
+    },
+    {
+      "name": "temperature_threshold",
+      "type": "int"
+    },
+    {
+      "name": "excess",
+      "type": "int"
+    },
+    {
+      "name": "alert_level",
+      "type": "string"
+    },
+    {
+      "name": "alert_timestamp",
+      "type": {
+        "type": "long",
+        "logicalType": "local-timestamp-millis"
+      }
+    }
+  ]
+}

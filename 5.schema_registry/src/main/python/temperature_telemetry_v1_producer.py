@@ -12,7 +12,7 @@ schema_registry_config = {'url': 'http://localhost:8081'}
 schema_registry_client = SchemaRegistryClient(schema_registry_config)
 
 schema_str = None
-schema_path = '../avro/com.ucmmaster.kafka.data.v2.TemperatureTelemetry.avsc'
+schema_path = '../avro/com.ucmmaster.kafka.data.v1.TemperatureTelemetry.avsc'
 with open(schema_path, "r") as f:
     schema_str = f.read()
 
@@ -33,8 +33,7 @@ producer = SerializingProducer({
 
 data = {
     "id": random.randint(1, 10),
-    "temperature": random.randint(1, 40),
-    "humidity": random.randint(10, 80)
+    "temperature": random.randint(1, 40)
 }
 
 def delivery_report(err, msg):

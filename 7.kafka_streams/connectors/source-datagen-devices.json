@@ -1,16 +1,18 @@
 {
-  "name": "source-datagen-users",
+  "name": "source-datagen-devices",
   "config": {
     "connector.class": "io.confluent.kafka.connect.datagen.DatagenConnector",
-    "kafka.topic": "users",
-    "quickstart": "users",
-    "max.interval": 1000,
-    "iterations": 10000000,
+    "kafka.topic": "devices",
+    "schema.keyfield": "id",
+    "schema.filename": "/home/appuser/com.ucmmaster.kafka.data.v1.Device.avsc",
+    "max.interval": 10,
+    "iterations": 100,
     "tasks.max": "1",
     "value.converter": "io.confluent.connect.avro.AvroConverter",
     "value.converter.schema.registry.url": "http://schema-registry:8081",
     "value.converter.schemas.enable": "false",
+    "topic.creation.default.partitions": "1",
     "topic.creation.default.replication.factor": "3",
-    "topic.creation.default.partitions": "3"
+    "topic.creation.default.cleanup.policy": "compact"
   }
 }

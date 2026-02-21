@@ -6,11 +6,14 @@ docker compose exec connect confluent-hub install --no-prompt confluentinc/kafka
 #jdbc
 docker compose exec connect confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:latest
 
-#cdc mysqk
+#cdc mysql
 docker compose exec connect confluent-hub install --no-prompt debezium/debezium-connector-mysql:latest
 
 #mongodb
 docker compose exec connect confluent-hub install --no-prompt mongodb/kafka-connect-mongodb:latest
+
+#adls
+docker compose exec connect  confluent-hub install --no-prompt confluentinc/kafka-connect-azure-data-lake-gen2-storage:latest
 
 #copia el driver jdbc mysql dentro del contenedor connect
 docker cp ./mysql/mysql-connector-java-5.1.45.jar connect:/usr/share/confluent-hub-components/confluentinc-kafka-connect-jdbc/lib/mysql-connector-java-5.1.45.jar
