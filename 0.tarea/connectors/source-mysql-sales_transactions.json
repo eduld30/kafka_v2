@@ -10,7 +10,6 @@
     "poll.interval.ms": 5000,
     "table.whitelist": "sales_transactions",
     "mode": "timestamp",
-    "timestamp.column.name": "timestamp",
-    "numeric.mapping": "best_fit_eager_double"
+    "timestamp.column.name": "timestamp"
   }
 }

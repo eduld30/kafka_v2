@@ -10,7 +10,7 @@ curl -d @"./connectors/source-datagen-sensor-telemetry.json" -H "Content-Type: a
 
 curl -d @"./connectors/source-mysql-sales_transactions.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors | jq
 
-#curl -d @"./connectors/sink-mongodb-sensor_alerts.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors | jq
+curl -d @"./connectors/sink-mongodb-sensor_alerts.json" -H "Content-Type: application/json" -X POST http://localhost:8083/connectors | jq
 
 echo "OK"
 

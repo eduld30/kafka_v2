@@ -21,7 +21,6 @@ docker cp ./mysql/mysql-connector-java-5.1.45.jar connect:/usr/share/confluent-h
 echo "Copiando schemas AVRO..."
 docker cp ../0.tarea/src/main/avro/sensor-telemetry.avsc connect:/home/appuser/
 docker cp ../0.tarea/src/main/avro/transactions.avsc connect:/home/appuser/
-docker cp ../0.tarea/src/main/avro/sensor-alert.avsc connect:/home/appuser/
 
 echo "Reiniciando contenedor connect..."
 docker compose restart connect

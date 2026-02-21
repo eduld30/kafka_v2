@@ -41,12 +41,12 @@ public class SensorAlerterApp {
 
         // Creamos el KStream mediante el builder
         StreamsBuilder builder = new StreamsBuilder();
-        KStream<String, SensorTelemetry> firstStream =
+        KStream<String, SensorTelemetry> alertStream =
                 builder.stream(inputTopic, Consumed.with(Serdes.String(), sensorTelemetrySerde));
 
         // Filtramos los eventos con temperatura > 35 o humedad < 20 y lanzamos alerta
-        firstStream
-                .peek((key, value) -> System.out.println("Incoming record - key " + key + " value " + value))
+        alertStream
+                .peek((k, v) -> System.out.println("Incoming record - key " + k + " value " + v))
                 .filter((k, v) ->
                         v != null && (v.getTemperature() > TEMP_THRESHOLD || v.getHumidity() < HUM_THRESHOLD)
                 )
@@ -94,8 +94,16 @@ public class SensorAlerterApp {
         Topology topology = createTopology();
 
         KafkaStreams streams = new KafkaStreams(topology, props);
+
+        // Ver excepciones
+        streams.setUncaughtExceptionHandler((t, e) -> {
+            System.err.println("Uncaught exception in thread " + t.getName());
+            e.printStackTrace();
+        });
+
         // Iniciar Kafka Streams
         streams.start();
+
         // Parada controlada en caso de apagado
         Runtime.getRuntime().addShutdownHook(new Thread(streams::close));
 

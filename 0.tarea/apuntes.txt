@@ -1,0 +1,12 @@
+- revisar timestamps de sensor-telemetry
+    --> intentar hacerlo con SMTs para puntos extra
+    --> si no ver que el epoch sea correcto
+
+- ver si se puede renombrar topic sales_transactions a sales-transactions
+
+- revisar si es necesario copiar el esquema avro de sensor-alert al cluster de connect
+
+- revisar si se puede arreglar el campo price para que sea numérico
+
+- apunte para README conector MongoDB
+    --> errors.tolerance = all, nos importa más la continuidad que la consistencia en alertas IoT
