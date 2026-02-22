@@ -13,6 +13,17 @@
       }
     },
     {
+      "name": "timestamp",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
+    },
+    {
       "name": "temperature",
       "type": {
         "type": "float",

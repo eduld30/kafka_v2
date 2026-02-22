@@ -14,10 +14,10 @@ import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class SensorTelemetry extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 8169387245863690220L;
+  private static final long serialVersionUID = 43228241099387378L;
 
 
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"SensorTelemetry\",\"namespace\":\"com.farmia.iot\",\"fields\":[{\"name\":\"sensor_id\",\"type\":{\"type\":\"string\",\"arg.properties\":{\"regex\":\"sensor_[1-9]{3}\"}}},{\"name\":\"timestamp\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\",\"arg.properties\":{\"iteration\":{\"start\":1771673502,\"step\":1000}}}},{\"name\":\"temperature\",\"type\":{\"type\":\"float\",\"arg.properties\":{\"range\":{\"min\":20.0,\"max\":40.0}}}},{\"name\":\"humidity\",\"type\":{\"type\":\"float\",\"arg.properties\":{\"range\":{\"min\":15.0,\"max\":40.0}}}},{\"name\":\"soil_fertility\",\"type\":{\"type\":\"float\",\"arg.properties\":{\"range\":{\"min\":50.0,\"max\":90.0}}}}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"SensorTelemetry\",\"namespace\":\"com.farmia.iot\",\"fields\":[{\"name\":\"sensor_id\",\"type\":{\"type\":\"string\",\"arg.properties\":{\"regex\":\"sensor_[1-9]{3}\"}}},{\"name\":\"timestamp\",\"type\":[\"null\",{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}],\"default\":null},{\"name\":\"temperature\",\"type\":{\"type\":\"float\",\"arg.properties\":{\"range\":{\"min\":10.0,\"max\":40.0}}}},{\"name\":\"humidity\",\"type\":{\"type\":\"float\",\"arg.properties\":{\"range\":{\"min\":15.0,\"max\":60.0}}}},{\"name\":\"soil_fertility\",\"type\":{\"type\":\"float\",\"arg.properties\":{\"range\":{\"min\":50.0,\"max\":90.0}}}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static final SpecificData MODEL$ = new SpecificData();
@@ -99,7 +99,7 @@ public class SensorTelemetry extends org.apache.avro.specific.SpecificRecordBase
    */
   public SensorTelemetry(java.lang.CharSequence sensor_id, java.time.Instant timestamp, java.lang.Float temperature, java.lang.Float humidity, java.lang.Float soil_fertility) {
     this.sensor_id = sensor_id;
-    this.timestamp = timestamp.truncatedTo(java.time.temporal.ChronoUnit.MILLIS);
+    this.timestamp = timestamp;
     this.temperature = temperature;
     this.humidity = humidity;
     this.soil_fertility = soil_fertility;
@@ -122,21 +122,6 @@ public class SensorTelemetry extends org.apache.avro.specific.SpecificRecordBase
     case 4: return soil_fertility;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
-  }
-
-  private static final org.apache.avro.Conversion<?>[] conversions =
-      new org.apache.avro.Conversion<?>[] {
-      null,
-      new org.apache.avro.data.TimeConversions.TimestampMillisConversion(),
-      null,
-      null,
-      null,
-      null
-  };
-
-  @Override
-  public org.apache.avro.Conversion<?> getConversion(int field) {
-    return conversions[field];
   }
 
   // Used by DatumReader.  Applications should not call.
@@ -184,7 +169,7 @@ public class SensorTelemetry extends org.apache.avro.specific.SpecificRecordBase
    * @param value the value to set.
    */
   public void setTimestamp(java.time.Instant value) {
-    this.timestamp = value.truncatedTo(java.time.temporal.ChronoUnit.MILLIS);
+    this.timestamp = value;
   }
 
   /**
@@ -402,7 +387,7 @@ public class SensorTelemetry extends org.apache.avro.specific.SpecificRecordBase
       */
     public com.farmia.iot.SensorTelemetry.Builder setTimestamp(java.time.Instant value) {
       validate(fields()[1], value);
-      this.timestamp = value.truncatedTo(java.time.temporal.ChronoUnit.MILLIS);
+      this.timestamp = value;
       fieldSetFlags()[1] = true;
       return this;
     }
@@ -421,6 +406,7 @@ public class SensorTelemetry extends org.apache.avro.specific.SpecificRecordBase
       * @return This builder.
       */
     public com.farmia.iot.SensorTelemetry.Builder clearTimestamp() {
+      timestamp = null;
       fieldSetFlags()[1] = false;
       return this;
     }
