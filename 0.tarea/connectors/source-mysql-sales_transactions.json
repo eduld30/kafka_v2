@@ -10,6 +10,11 @@
     "poll.interval.ms": 5000,
     "table.whitelist": "sales_transactions",
     "mode": "timestamp",
-    "timestamp.column.name": "timestamp"
+    "timestamp.column.name": "timestamp",
+
+    "transforms": "route",
+    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.route.regex": "sales_transactions",
+    "transforms.route.replacement": "sales-transactions"
   }
 }

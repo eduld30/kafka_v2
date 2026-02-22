@@ -13,25 +13,12 @@
       }
     },
     {
-      "name": "timestamp",
-      "type": {
-        "type": "long",
-        "logicalType": "timestamp-millis",
-        "arg.properties": {
-          "iteration": {
-            "start": 1771673502,
-            "step": 1000
-          }
-        }
-      }
-    },
-    {
       "name": "temperature",
       "type": {
         "type": "float",
         "arg.properties": {
           "range": {
-            "min": 20.00,
+            "min": 10.00,
             "max": 40.00
           }
         }
@@ -44,7 +31,7 @@
         "arg.properties": {
           "range": {
             "min": 15.00,
-            "max": 40.00
+            "max": 60.00
           }
         }
       }

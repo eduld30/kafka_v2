@@ -5,7 +5,7 @@
     "tasks.max": "1",
     "topics": "sensor-alerts",
 
-    "connection.uri": "mongodb://mongodb:27017",
+    "connection.uri": "mongodb://admin:secret123@mongodb:27017/?authSource=admin",
     "database": "db",
     "collection": "sensor_alerts",
 

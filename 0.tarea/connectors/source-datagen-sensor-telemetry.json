@@ -7,6 +7,10 @@
     "schema.keyfield": "sensor_id",
     "max.interval": "1000",
     "iterations": "10000000",
-    "tasks.max": "1"
+    "tasks.max": "1",
+
+    "transforms": "NowTs",
+    "transforms.NowTs.type": "com.github.jcustenborder.kafka.connect.transform.common.TimestampNowField$Value",
+    "transforms.NowTs.fields": "timestamp"
   }
 }

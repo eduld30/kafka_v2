@@ -24,7 +24,7 @@ import java.util.Properties;
 public class SalesSummaryApp {
 
     private static Topology createTopology() {
-        final String inputTopic = "sales_transactions";
+        final String inputTopic = "sales-transactions";
         final String outputTopic = "sales-summary";
 
         final Map<String, String> serdeConfig = Collections.singletonMap("schema.registry.url", "http://localhost:8081");

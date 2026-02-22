@@ -1,12 +1,14 @@
-- revisar timestamps de sensor-telemetry
-    --> intentar hacerlo con SMTs para puntos extra
-    --> si no ver que el epoch sea correcto
-
-- ver si se puede renombrar topic sales_transactions a sales-transactions
-
-- revisar si es necesario copiar el esquema avro de sensor-alert al cluster de connect
-
-- revisar si se puede arreglar el campo price para que sea numérico
-
 - apunte para README conector MongoDB
     --> errors.tolerance = all, nos importa más la continuidad que la consistencia en alertas IoT
+
+- apunte para README App SalesSummary
+    --> sales-transactions se consume con GenericAvroSerde
+    --> el avro no es el mismo que el del DataGen, es autogenerado por el conector JDBC
+    --> como no controlamos el esquema del productor consumimos con genérico por flexibilidad
+    --> en contexto Enterprise se podría escribir a un sales-transactions-raw y tener una app KafkaStreams intermedia para normalizar y escribir con un esquema avro específico
+    --> se consumiría luego con este esquema, para mantener la simplicidad y seguir el modelo propuesto en enunciado se mantiene directo
+
+- apunte para README App SalesSummary
+    --> tipo de price es org.apache.kafka.connect.data.Decimal (type byte, logicalType decimal)
+    --> esquema verificado con curl -s http://localhost:8081/subjects/sales-transactions-value/versions/latest | jq -r '.schema'
+    --> necesario convertir el campo price a float
