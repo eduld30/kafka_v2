@@ -12,9 +12,15 @@
     "mode": "timestamp",
     "timestamp.column.name": "timestamp",
 
-    "transforms": "route",
+    "transforms": "route,ToKey,KeyString",
     "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
     "transforms.route.regex": "sales_transactions",
-    "transforms.route.replacement": "sales-transactions"
+    "transforms.route.replacement": "sales-transactions",
+
+    "transforms.ToKey.type": "org.apache.kafka.connect.transforms.ValueToKey",
+    "transforms.ToKey.fields": "transaction_id",
+
+    "transforms.KeyString.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
+    "transforms.KeyString.field": "transaction_id"
   }
 }

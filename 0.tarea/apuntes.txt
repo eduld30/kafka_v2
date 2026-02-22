@@ -12,3 +12,12 @@
     --> tipo de price es org.apache.kafka.connect.data.Decimal (type byte, logicalType decimal)
     --> esquema verificado con curl -s http://localhost:8081/subjects/sales-transactions-value/versions/latest | jq -r '.schema'
     --> necesario convertir el campo price a float
+
+- apunte para README DataGen sensor-telemetry
+    --> se añade timestamp mediante SMT para comportamiento realista
+    --> opción simple no funciona (el metadato timestamp que usa esta SMT es null en estos records sintéticos)
+        transforms=AddTs
+        transforms.AddTs.type=org.apache.kafka.connect.transforms.InsertField$Value
+        transforms.AddTs.timestamp.field=event_ts
+    --> solución: se emplea un plugin con SMT de que hace timestamp.now() en UTC
+    --> se añade la descarga del plugin al setup.sh
